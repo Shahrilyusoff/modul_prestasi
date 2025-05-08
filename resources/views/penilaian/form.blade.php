@@ -543,7 +543,7 @@
 
 @push('scripts')
 <script>
-    // Dynamic form fields for kegiatan
+    // Kegiatan Luar Dynamic Fields
     $('#add-kegiatan').click(function() {
         let index = $('.kegiatan-row').length;
         let html = `
@@ -571,16 +571,148 @@
 
     $(document).on('click', '.remove-kegiatan', function() {
         $(this).closest('.kegiatan-row').remove();
-        // Reindex all remaining fields
-        $('.kegiatan-row').each(function(i) {
-            $(this).find('input, select').each(function() {
-                let name = $(this).attr('name').replace(/\[\d+\]/, '[' + i + ']');
-                $(this).attr('name', name);
-            });
-        });
+        reindexFields('.kegiatan-row', 'kegiatan');
     });
 
-    // Similar scripts for latihan, latihan-diperlukan, sasaran-awal, sasaran-tambah, sasaran-gugur
-    // ... (implement similar dynamic field functionality for other sections)
+    // Latihan Dynamic Fields
+    $('#add-latihan').click(function() {
+        let index = $('.latihan-row').length;
+        let html = `
+        <div class="row latihan-row mb-3">
+            <div class="col-md-3">
+                <input type="text" class="form-control" name="latihan[${index}][nama_latihan]" placeholder="{{ __('Nama Latihan') }}" required>
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="latihan[${index}][sijil]" placeholder="{{ __('No. Sijil') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="date" class="form-control" name="latihan[${index}][tarikh_mula]" required>
+            </div>
+            <div class="col-md-2">
+                <input type="date" class="form-control" name="latihan[${index}][tarikh_tamat]" required>
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="latihan[${index}][tempat]" placeholder="{{ __('Tempat') }}" required>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger remove-latihan"><i class="fas fa-trash"></i></button>
+            </div>
+            <input type="hidden" name="latihan[${index}][diperlukan]" value="0">
+        </div>`;
+        $('#latihan-container').append(html);
+    });
+
+    $(document).on('click', '.remove-latihan', function() {
+        $(this).closest('.latihan-row').remove();
+        reindexFields('.latihan-row', 'latihan');
+    });
+
+    // Latihan Diperlukan Dynamic Fields
+    $('#add-latihan-diperlukan').click(function() {
+        let index = $('.latihan-diperlukan-row').length;
+        let html = `
+        <div class="row latihan-diperlukan-row mb-3">
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="latihan_diperlukan[${index}][nama_latihan]" placeholder="{{ __('Nama/Bidang Latihan') }}" required>
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="latihan_diperlukan[${index}][sebab_diperlukan]" placeholder="{{ __('Sebab Diperlukan') }}" required>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger remove-latihan-diperlukan"><i class="fas fa-trash"></i></button>
+            </div>
+            <input type="hidden" name="latihan_diperlukan[${index}][diperlukan]" value="1">
+        </div>`;
+        $('#latihan-diperlukan-container').append(html);
+    });
+
+    $(document).on('click', '.remove-latihan-diperlukan', function() {
+        $(this).closest('.latihan-diperlukan-row').remove();
+        reindexFields('.latihan-diperlukan-row', 'latihan_diperlukan');
+    });
+
+    // Sasaran Awal Dynamic Fields
+    $('#add-sasaran-awal').click(function() {
+        let index = $('.sasaran-awal-row').length;
+        let html = `
+        <div class="row sasaran-awal-row mb-3">
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="sasaran_awal[${index}][aktiviti]" placeholder="{{ __('Aktiviti/Projek') }}" required>
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="sasaran_awal[${index}][petunjuk_prestasi]" placeholder="{{ __('Petunjuk Prestasi (Kuantiti/Kualiti/Masa/Kos)') }}" required>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger remove-sasaran-awal"><i class="fas fa-trash"></i></button>
+            </div>
+            <input type="hidden" name="sasaran_awal[${index}][bahagian]" value="awal">
+        </div>`;
+        $('#sasaran-awal-container').append(html);
+    });
+
+    $(document).on('click', '.remove-sasaran-awal', function() {
+        $(this).closest('.sasaran-awal-row').remove();
+        reindexFields('.sasaran-awal-row', 'sasaran_awal');
+    });
+
+    // Sasaran Tambah Dynamic Fields
+    $('#add-sasaran-tambah').click(function() {
+        let index = $('.sasaran-tambah-row').length;
+        let html = `
+        <div class="row sasaran-tambah-row mb-3">
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="sasaran_tambah[${index}][aktiviti]" placeholder="{{ __('Aktiviti/Projek') }}" required>
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="sasaran_tambah[${index}][petunjuk_prestasi]" placeholder="{{ __('Petunjuk Prestasi (Kuantiti/Kualiti/Masa/Kos)') }}" required>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger remove-sasaran-tambah"><i class="fas fa-trash"></i></button>
+            </div>
+            <input type="hidden" name="sasaran_tambah[${index}][bahagian]" value="pertengahan">
+            <input type="hidden" name="sasaran_tambah[${index}][ditambah]" value="1">
+        </div>`;
+        $('#sasaran-tambah-container').append(html);
+    });
+
+    $(document).on('click', '.remove-sasaran-tambah', function() {
+        $(this).closest('.sasaran-tambah-row').remove();
+        reindexFields('.sasaran-tambah-row', 'sasaran_tambah');
+    });
+
+    // Sasaran Gugur Dynamic Fields
+    $('#add-sasaran-gugur').click(function() {
+        let index = $('.sasaran-gugur-row').length;
+        let html = `
+        <div class="row sasaran-gugur-row mb-3">
+            <div class="col-md-10">
+                <input type="text" class="form-control" name="sasaran_gugur[${index}][aktiviti]" placeholder="{{ __('Aktiviti/Projek') }}" required>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger remove-sasaran-gugur"><i class="fas fa-trash"></i></button>
+            </div>
+            <input type="hidden" name="sasaran_gugur[${index}][bahagian]" value="pertengahan">
+            <input type="hidden" name="sasaran_gugur[${index}][digugurkan]" value="1">
+        </div>`;
+        $('#sasaran-gugur-container').append(html);
+    });
+
+    $(document).on('click', '.remove-sasaran-gugur', function() {
+        $(this).closest('.sasaran-gugur-row').remove();
+        reindexFields('.sasaran-gugur-row', 'sasaran_gugur');
+    });
+
+    // Helper function to reindex fields
+    function reindexFields(selector, prefix) {
+        $(selector).each(function(i) {
+            $(this).find('input, select').each(function() {
+                let name = $(this).attr('name');
+                if (name) {
+                    let newName = name.replace(new RegExp(`${prefix}\\[\\d+\\]`), `${prefix}[${i}]`);
+                    $(this).attr('name', newName);
+                }
+            });
+        });
+    }
 </script>
 @endpush
