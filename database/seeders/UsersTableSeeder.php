@@ -15,7 +15,7 @@ class UsersTableSeeder extends Seeder
         // Super Admin
         User::create([
             'name' => 'Super Admin',
-            'email' => 'superadmin@ikmal.edu.my',
+            'email' => 'superadmin@example.com',
             'password' => Hash::make('password'),
             'role' => 'superadmin',
             'jawatan' => 'Pembangun Sistem',
@@ -26,8 +26,8 @@ class UsersTableSeeder extends Seeder
 
         // Admin
         User::create([
-            'name' => 'Admin HR',
-            'email' => 'admin@ikmal.edu.my',
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
             'jawatan' => 'Pegawai HR',
@@ -39,7 +39,7 @@ class UsersTableSeeder extends Seeder
         // PPP
         User::create([
             'name' => 'PPP Contoh',
-            'email' => 'ppp@ikmal.edu.my',
+            'email' => 'ppp@example.com',
             'password' => Hash::make('password'),
             'role' => 'ppp',
             'jawatan' => 'Ketua Jabatan',
@@ -51,7 +51,7 @@ class UsersTableSeeder extends Seeder
         // PPK
         User::create([
             'name' => 'PPK Contoh',
-            'email' => 'ppk@ikmal.edu.my',
+            'email' => 'ppk@example.com',
             'password' => Hash::make('password'),
             'role' => 'ppk',
             'jawatan' => 'Pengarah',
@@ -62,8 +62,8 @@ class UsersTableSeeder extends Seeder
 
         // PYD - Management
         User::create([
-            'name' => 'PYD Pengurusan',
-            'email' => 'pengurusan@ikmal.edu.my',
+            'name' => 'PYD Kumpulan Pengurusan Dan Profesional',
+            'email' => 'pengurusan@example.com',
             'password' => Hash::make('password'),
             'role' => 'pyd',
             'jenis' => 'pengurusan',
@@ -75,8 +75,8 @@ class UsersTableSeeder extends Seeder
 
         // PYD - Sokongan I
         User::create([
-            'name' => 'PYD Sokongan I',
-            'email' => 'sokongani@ikmal.edu.my',
+            'name' => 'PYD Kumpulan Perkhidmatan Sokongan I',
+            'email' => 'sokongani@example.com',
             'password' => Hash::make('password'),
             'role' => 'pyd',
             'jenis' => 'sokongan_i',
@@ -88,8 +88,8 @@ class UsersTableSeeder extends Seeder
 
         // PYD - Sokongan II
         User::create([
-            'name' => 'PYD Sokongan II',
-            'email' => 'sokonganii@ikmal.edu.my',
+            'name' => 'PYD Kumpulan Perkhidmatan Sokongan II',
+            'email' => 'sokonganii@example.com',
             'password' => Hash::make('password'),
             'role' => 'pyd',
             'jenis' => 'sokongan_ii',
