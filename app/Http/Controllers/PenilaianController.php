@@ -108,6 +108,7 @@ class PenilaianController extends Controller
         return view('penilaian.edit', compact('penilaian', 'tempohPenilaian', 'pydOptions', 'pppOptions', 'ppkOptions'));
     }
 
+    
     public function update(Request $request, Penilaian $penilaian)
     {
         $this->authorize('update', $penilaian);
@@ -279,6 +280,7 @@ class PenilaianController extends Controller
         return redirect()->route('penilaian.index')->with('success', 'Penilaian berjaya dipadam.');
     }
 
+    
     public function submitBahagianII(Penilaian $penilaian)
     {
         $this->authorize('pyd', $penilaian);

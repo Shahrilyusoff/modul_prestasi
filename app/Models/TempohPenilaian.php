@@ -11,7 +11,13 @@ class TempohPenilaian extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama_tempoh', 'tarikh_mula', 'tarikh_tamat', 'jenis', 'aktif'];
+    protected $fillable = ['nama_tempoh', 'jenis', 'aktif'];
+
+    protected $casts = [
+        'tarikh_mula' => 'date',
+        'tarikh_tamat' => 'date',
+    ];
+    
 
     public function penilaian()
     {

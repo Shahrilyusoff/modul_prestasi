@@ -11,8 +11,8 @@ class TempohPenilaianController extends Controller
 {
     public function index()
     {
-        $tempoh = TempohPenilaian::all();
-        return response()->json($tempoh);
+        $tempohPenilaian = TempohPenilaian::all();
+        return view('tempoh-penilaian.index', compact('tempohPenilaian'));
     }
 
     public function store(Request $request)
