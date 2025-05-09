@@ -54,24 +54,27 @@ class TempohPenilaianController extends Controller
             'tarikh_mula' => 'required|date',
             'tarikh_tamat' => 'required|date|after:tarikh_mula',
             'jenis' => 'required|in:sasaran_awal,pertengahan,akhir',
-            'aktif' => 'nullable|boolean'
         ]);
-
-        $data = $request->all();
-        $data['aktif'] = $request->has('aktif');
-
+    
+        $tempohPenilaian->nama_tempoh = $request->nama_tempoh;
+        $tempohPenilaian->tarikh_mula = $request->tarikh_mula;
+        $tempohPenilaian->tarikh_tamat = $request->tarikh_tamat;
+        $tempohPenilaian->jenis = $request->jenis;
+        $tempohPenilaian->aktif = $request->has('aktif');
+    
         // Deactivate all other periods if activating this one
-        if ($data['aktif']) {
+        if ($tempohPenilaian->aktif) {
             TempohPenilaian::where('id', '!=', $tempohPenilaian->id)
                 ->where('aktif', true)
                 ->update(['aktif' => false]);
         }
-
-        $tempohPenilaian->update($data);
-
+    
+        $tempohPenilaian->save();
+    
         return redirect()->route('tempoh-penilaian.index')
             ->with('success', 'Tempoh penilaian berjaya dikemaskini');
     }
+    
 
     public function destroy(TempohPenilaian $tempohPenilaian)
     {
