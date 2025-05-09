@@ -1,21 +1,13 @@
 <?php
 
+// routes/web.php
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TempohPenilaianController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\UserController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,9 +35,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Penilaian routes
     Route::resource('penilaian', PenilaianController::class);
-    Route::get('penilaian/pyd', [PenilaianController::class, 'pyd'])->name('penilaian.pyd');
-    Route::post('penilaian/{penilaian}/submit-bahagian-ii', [PenilaianController::class, 'submitBahagianII'])
-        ->name('penilaian.submit-bahagian-ii');
+    Route::get('penilaian/pyd', [PenilaianController::class, 'pyd'])
+        ->name('penilaian.pyd')
+        ->middleware('auth');
 
     // Laporan routes
     Route::get('laporan/penilaian/{penilaian}', [LaporanController::class, 'penilaian'])

@@ -35,7 +35,7 @@ class TempohPenilaianSeeder extends Seeder
             'tarikh_mula' => $now->copy()->month(11)->startOfMonth(),
             'tarikh_tamat' => $now->copy()->endOfYear(),
             'jenis' => 'akhir',
-            'aktif' => true
+            'aktif' => false
         ]);
     }
 }

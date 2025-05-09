@@ -57,13 +57,11 @@ class PenilaianController extends Controller
             'ppk_id' => 'nullable|exists:users,id',
         ]);
 
-        // Check if evaluation period exists and is active
         $tempoh = TempohPenilaian::find($request->tempoh_penilaian_id);
         if (!$tempoh || !$tempoh->aktif) {
             return back()->with('error', 'Tempoh penilaian tidak aktif');
         }
 
-        // Check if PYD already has evaluation for this period
         $existing = Penilaian::where('tempoh_penilaian_id', $request->tempoh_penilaian_id)
             ->where('pyd_id', $request->pyd_id)
             ->exists();

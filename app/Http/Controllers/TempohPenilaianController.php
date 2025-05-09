@@ -1,7 +1,5 @@
 <?php
 
-// app/Http/Controllers/TempohPenilaianController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\TempohPenilaian;
@@ -15,57 +13,79 @@ class TempohPenilaianController extends Controller
         return view('tempoh-penilaian.index', compact('tempohPenilaian'));
     }
 
+    public function create()
+    {
+        return view('tempoh-penilaian.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
-            'nama_tempoh' => 'required',
+            'nama_tempoh' => 'required|string|max:255',
             'tarikh_mula' => 'required|date',
             'tarikh_tamat' => 'required|date|after:tarikh_mula',
             'jenis' => 'required|in:sasaran_awal,pertengahan,akhir',
+            'aktif' => 'nullable|boolean'
         ]);
 
-        // Deactivate all other periods if this one is set to active
-        if ($request->aktif) {
+        $data = $request->all();
+        $data['aktif'] = $request->has('aktif');
+
+        // Deactivate all other periods if activating this one
+        if ($data['aktif']) {
             TempohPenilaian::where('aktif', true)->update(['aktif' => false]);
         }
 
-        $tempoh = TempohPenilaian::create($request->all());
-        return response()->json($tempoh, 201);
+        TempohPenilaian::create($data);
+
+        return redirect()->route('tempoh-penilaian.index')
+            ->with('success', 'Tempoh penilaian berjaya ditambah');
     }
 
-    public function show(TempohPenilaian $tempohPenilaian)
+    public function edit(TempohPenilaian $tempohPenilaian)
     {
-        return response()->json($tempohPenilaian);
+        return view('tempoh-penilaian.edit', compact('tempohPenilaian'));
     }
 
     public function update(Request $request, TempohPenilaian $tempohPenilaian)
     {
         $request->validate([
-            'nama_tempoh' => 'required',
+            'nama_tempoh' => 'required|string|max:255',
             'tarikh_mula' => 'required|date',
             'tarikh_tamat' => 'required|date|after:tarikh_mula',
             'jenis' => 'required|in:sasaran_awal,pertengahan,akhir',
+            'aktif' => 'nullable|boolean'
         ]);
 
-        // Deactivate all other periods if this one is set to active
-        if ($request->aktif) {
-            TempohPenilaian::where('aktif', true)->where('id', '!=', $tempohPenilaian->id)->update(['aktif' => false]);
+        $data = $request->all();
+        $data['aktif'] = $request->has('aktif');
+
+        // Deactivate all other periods if activating this one
+        if ($data['aktif']) {
+            TempohPenilaian::where('id', '!=', $tempohPenilaian->id)
+                ->where('aktif', true)
+                ->update(['aktif' => false]);
         }
 
-        $tempohPenilaian->update($request->all());
-        return response()->json($tempohPenilaian);
+        $tempohPenilaian->update($data);
+
+        return redirect()->route('tempoh-penilaian.index')
+            ->with('success', 'Tempoh penilaian berjaya dikemaskini');
     }
 
     public function destroy(TempohPenilaian $tempohPenilaian)
     {
         $tempohPenilaian->delete();
-        return response()->json(null, 204);
+        return redirect()->route('tempoh-penilaian.index')
+            ->with('success', 'Tempoh penilaian berjaya dipadam');
     }
 
     public function aktifkan(TempohPenilaian $tempohPenilaian)
     {
         TempohPenilaian::where('aktif', true)->update(['aktif' => false]);
         $tempohPenilaian->update(['aktif' => true]);
-        return response()->json($tempohPenilaian);
+
+        return redirect()->route('tempoh-penilaian.index')
+            ->with('success', 'Tempoh penilaian berjaya diaktifkan');
     }
 }

@@ -1,10 +1,11 @@
 <!-- resources/views/tempoh-penilaian/form.blade.php -->
-
 <div class="row">
     <div class="col-md-6">
         <div class="mb-3">
             <label for="nama_tempoh" class="form-label">{{ __('Nama Tempoh') }}</label>
-            <input type="text" class="form-control @error('nama_tempoh') is-invalid @enderror" id="nama_tempoh" name="nama_tempoh" value="{{ old('nama_tempoh', $tempohPenilaian->nama_tempoh ?? '') }}" required>
+            <input type="text" class="form-control @error('nama_tempoh') is-invalid @enderror" 
+                   id="nama_tempoh" name="nama_tempoh" 
+                   value="{{ old('nama_tempoh', $tempohPenilaian->nama_tempoh ?? '') }}" required>
             @error('nama_tempoh')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -31,7 +32,9 @@
     <div class="col-md-6">
         <div class="mb-3">
             <label for="tarikh_mula" class="form-label">{{ __('Tarikh Mula') }}</label>
-            <input type="date" class="form-control @error('tarikh_mula') is-invalid @enderror" id="tarikh_mula" name="tarikh_mula" value="{{ old('tarikh_mula', isset($tempohPenilaian->tarikh_mula) ? $tempohPenilaian->tarikh_mula->format('Y-m-d') : '') }}" required>
+            <input type="date" class="form-control @error('tarikh_mula') is-invalid @enderror" 
+                   id="tarikh_mula" name="tarikh_mula" 
+                   value="{{ old('tarikh_mula', isset($tempohPenilaian->tarikh_mula) ? $tempohPenilaian->tarikh_mula->format('Y-m-d') : '') }}" required>
             @error('tarikh_mula')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -41,7 +44,9 @@
     <div class="col-md-6">
         <div class="mb-3">
             <label for="tarikh_tamat" class="form-label">{{ __('Tarikh Tamat') }}</label>
-            <input type="date" class="form-control @error('tarikh_tamat') is-invalid @enderror" id="tarikh_tamat" name="tarikh_tamat" value="{{ old('tarikh_tamat', isset($tempohPenilaian->tarikh_tamat) ? $tempohPenilaian->tarikh_tamat->format('Y-m-d') : '') }}" required>
+            <input type="date" class="form-control @error('tarikh_tamat') is-invalid @enderror" 
+                   id="tarikh_tamat" name="tarikh_tamat" 
+                   value="{{ old('tarikh_tamat', isset($tempohPenilaian->tarikh_tamat) ? $tempohPenilaian->tarikh_tamat->format('Y-m-d') : '') }}" required>
             @error('tarikh_tamat')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -50,10 +55,16 @@
 </div>
 
 <div class="mb-3 form-check">
-    <input type="checkbox" class="form-check-input" id="aktif" name="aktif" {{ old('aktif', $tempohPenilaian->aktif ?? false) ? 'checked' : '' }}>
+    <input type="checkbox" class="form-check-input" id="aktif" name="aktif" value="1"
+           {{ old('aktif', $tempohPenilaian->aktif ?? false) ? 'checked' : '' }}>
     <label class="form-check-label" for="aktif">{{ __('Aktif') }}</label>
 </div>
 
-<div class="d-flex justify-content-end">
-    <button type="submit" class="btn btn-primary">{{ __('Simpan') }}</button>
+<div class="d-flex justify-content-between">
+    <a href="{{ route('tempoh-penilaian.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> {{ __('Kembali') }}
+    </a>
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-save"></i> {{ __('Simpan') }}
+    </button>
 </div>

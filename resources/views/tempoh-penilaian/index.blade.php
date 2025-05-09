@@ -3,7 +3,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tempoh Penilaian') }}
+            {{ __('Senarai Tempoh Penilaian') }}
         </h2>
     </x-slot>
 
@@ -72,4 +72,37 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+    $(document).ready(function() {
+        // Handle form submissions with AJAX
+        $('form').on('submit', function(e) {
+            e.preventDefault();
+            
+            if ($(this).hasClass('d-inline')) {
+                if (confirm('Adakah anda pasti?')) {
+                    submitForm($(this));
+                }
+            } else {
+                submitForm($(this));
+            }
+        });
+
+        function submitForm(form) {
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function(response) {
+                    window.location.reload();
+                },
+                error: function(xhr) {
+                    alert('Error: ' + xhr.responseText);
+                }
+            });
+        }
+    });
+    </script>
+    @endpush
 </x-app-layout>
