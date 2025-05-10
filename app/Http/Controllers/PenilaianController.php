@@ -34,7 +34,7 @@ class PenilaianController extends Controller
         $penilaian = Penilaian::with(['tempohPenilaian', 'ppp', 'ppk'])
             ->where('pyd_id', auth()->id())
             ->get();
-            
+    
         return view('penilaian.pyd', compact('penilaian'));
     }
 

@@ -34,10 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('tempoh-penilaian.aktifkan');
 
     // Penilaian routes
+    Route::get('/penilaian/pyd', [PenilaianController::class, 'pyd'])->name('penilaian.pyd');
     Route::resource('penilaian', PenilaianController::class);
-    Route::get('penilaian/pyd', [PenilaianController::class, 'pyd'])
-        ->name('penilaian.pyd')
-        ->middleware('auth');
 
     // Laporan routes
     Route::get('laporan/penilaian/{penilaian}', [LaporanController::class, 'penilaian'])
