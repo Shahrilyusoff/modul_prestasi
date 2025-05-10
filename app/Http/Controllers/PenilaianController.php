@@ -51,7 +51,7 @@ class PenilaianController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tempoh_penilaian_id' => 'required|exists:tempoh_penilaian,id',
+            'tempoh_penilaian_id' => 'required|exists:tempoh_penilaians,id',
             'pyd_id' => 'required|exists:users,id',
             'ppp_id' => 'required|exists:users,id',
             'ppk_id' => 'nullable|exists:users,id',
