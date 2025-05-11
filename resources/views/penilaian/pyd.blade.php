@@ -1,3 +1,5 @@
+<!-- resources/views/penilaian/pyd.blade.php -->
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -5,10 +7,10 @@
         </h2>
     </x-slot>
 
-    <div class="container-fluid mt-4">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-body">
-                <table class="table table-bordered table-striped">
+                <table class="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -21,31 +23,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($penilaian as $pen)
+                        @foreach($penilaian as $pen)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $pen->tempohPenilaian->nama_tempoh ?? '-' }}</td>
-                            <td>{{ $pen->ppp->name ?? '-' }}</td>
-                            <td>{{ $pen->ppk->name ?? '-' }}</td>
+                            <td>{{ $pen->tempohPenilaian->nama_tempoh }}</td>
+                            <td>{{ $pen->ppp->name }}</td>
+                            <td>{{ $pen->ppk ? $pen->ppk->name : '-' }}</td>
                             <td>
-                                @switch($pen->status)
-                                    @case('draf')
-                                        <span class="badge bg-secondary">Draf</span>
-                                        @break
-                                    @case('penilaian_ppp')
-                                        <span class="badge bg-warning text-dark">Penilaian PPP</span>
-                                        @break
-                                    @case('penilaian_ppk')
-                                        <span class="badge bg-info text-dark">Penilaian PPK</span>
-                                        @break
-                                    @case('selesai')
-                                        <span class="badge bg-success">Selesai</span>
-                                        @break
-                                    @default
-                                        <span class="badge bg-light text-dark">-</span>
-                                @endswitch
+                                @if($pen->status === 'draf')
+                                    <span class="badge bg-secondary">{{ __('Draf') }}</span>
+                                @elseif($pen->status === 'penilaian_ppp')
+                                    <span class="badge bg-warning text-dark">{{ __('Penilaian PPP') }}</span>
+                                @elseif($pen->status === 'penilaian_ppk')
+                                    <span class="badge bg-info">{{ __('Penilaian PPK') }}</span>
+                                @else
+                                    <span class="badge bg-success">{{ __('Selesai') }}</span>
+                                @endif
                             </td>
-                            <td>{{ $pen->markah_purata ? $pen->markah_purata . '%' : '-' }}</td>
+                            <td>
+                                @if($pen->markah_purata)
+                                    {{ $pen->markah_purata }}%
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td>
                                 <a href="{{ route('penilaian.show', $pen->id) }}" class="btn btn-sm btn-primary">
                                     <i class="fas fa-eye"></i>
@@ -60,11 +61,7 @@
                                 </a>
                             </td>
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="text-center">Tiada rekod penilaian.</td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
