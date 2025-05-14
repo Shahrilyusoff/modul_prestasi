@@ -1,5 +1,3 @@
-<!-- resources/views/penilaian/form.blade.php -->
-
 @csrf
 @if(isset($penilaian) && $penilaian->id)
     @method('PUT')
@@ -78,172 +76,14 @@
 </div>
 
 @if(isset($penilaian) && $penilaian->id)
-    <!-- Only show these sections if editing an existing penilaian -->
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            {{ __('BAHAGIAN II - KEGIATAN DAN SUMBANGAN DI LUAR TUGAS RASMI/LATIHAN') }}
-        </div>
-        <div class="card-body">
-            <h5 class="mb-3">1. {{ __('KEGIATAN DAN SUMBANGAN DI LUAR TUGAS RASMI') }}</h5>
-            
-            <div id="kegiatan-container">
-                @if(old('kegiatan', isset($penilaian) ? $penilaian->kegiatanLuar->toArray() : []))
-                    @foreach(old('kegiatan', isset($penilaian) ? $penilaian->kegiatanLuar->toArray() : []) as $index => $kegiatan)
-                    <div class="row kegiatan-row mb-3">
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" name="kegiatan[{{ $index }}][kegiatan]" placeholder="{{ __('Kegiatan/Aktiviti/Sumbangan') }}" value="{{ $kegiatan['kegiatan'] ?? '' }}" required>
-                        </div>
-                        <div class="col-md-5">
-                            <select class="form-select" name="kegiatan[{{ $index }}][peringkat]" required>
-                                <option value="">{{ __('Pilih Peringkat') }}</option>
-                                <option value="komuniti" {{ ($kegiatan['peringkat'] ?? '') == 'komuniti' ? 'selected' : '' }}>{{ __('Komuniti') }}</option>
-                                <option value="jabatan" {{ ($kegiatan['peringkat'] ?? '') == 'jabatan' ? 'selected' : '' }}>{{ __('Jabatan') }}</option>
-                                <option value="daerah" {{ ($kegiatan['peringkat'] ?? '') == 'daerah' ? 'selected' : '' }}>{{ __('Daerah') }}</option>
-                                <option value="negeri" {{ ($kegiatan['peringkat'] ?? '') == 'negeri' ? 'selected' : '' }}>{{ __('Negeri') }}</option>
-                                <option value="negara" {{ ($kegiatan['peringkat'] ?? '') == 'negara' ? 'selected' : '' }}>{{ __('Negara') }}</option>
-                                <option value="antarabangsa" {{ ($kegiatan['peringkat'] ?? '') == 'antarabangsa' ? 'selected' : '' }}>{{ __('Antarabangsa') }}</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            @if($index > 0)
-                                <button type="button" class="btn btn-danger remove-kegiatan"><i class="fas fa-trash"></i></button>
-                            @endif
-                        </div>
-                    </div>
-                    @endforeach
-                @else
-                    <div class="row kegiatan-row mb-3">
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" name="kegiatan[0][kegiatan]" placeholder="{{ __('Kegiatan/Aktiviti/Sumbangan') }}" required>
-                        </div>
-                        <div class="col-md-5">
-                            <select class="form-select" name="kegiatan[0][peringkat]" required>
-                                <option value="">{{ __('Pilih Peringkat') }}</option>
-                                <option value="komuniti">{{ __('Komuniti') }}</option>
-                                <option value="jabatan">{{ __('Jabatan') }}</option>
-                                <option value="daerah">{{ __('Daerah') }}</option>
-                                <option value="negeri">{{ __('Negeri') }}</option>
-                                <option value="negara">{{ __('Negara') }}</option>
-                                <option value="antarabangsa">{{ __('Antarabangsa') }}</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <!-- No delete button for first row -->
-                        </div>
-                    </div>
-                @endif
+    <!-- Show different sections based on evaluation period type and user role -->
+    @if($penilaian->tempohPenilaian->jenis === 'sasaran_awal' && (auth()->user()->role === 'pyd' || auth()->user()->role === 'ppp'))
+        <!-- Early Year - SKT Setting -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                {{ __('SASARAN KERJA TAHUNAN - PENETAPAN AWAL TAHUN') }}
             </div>
-            <button type="button" id="add-kegiatan" class="btn btn-sm btn-secondary mt-2">
-                <i class="fas fa-plus"></i> {{ __('Tambah Kegiatan') }}
-            </button>
-
-            <h5 class="mt-4 mb-3">2. {{ __('LATIHAN') }}</h5>
-            <p>i) {{ __('Latihan yang dihadiri') }}</p>
-            
-            <div id="latihan-container">
-                @if(old('latihan', isset($penilaian) ? $penilaian->latihan->where('diperlukan', false)->toArray() : []))
-                    @foreach(old('latihan', isset($penilaian) ? $penilaian->latihan->where('diperlukan', false)->toArray() : []) as $index => $latihan)
-                    <div class="row latihan-row mb-3">
-                        <div class="col-md-3">
-                            <input type="text" class="form-control" name="latihan[{{ $index }}][nama_latihan]" placeholder="{{ __('Nama Latihan') }}" value="{{ $latihan['nama_latihan'] ?? '' }}" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" class="form-control" name="latihan[{{ $index }}][sijil]" placeholder="{{ __('No. Sijil') }}" value="{{ $latihan['sijil'] ?? '' }}">
-                        </div>
-                        <div class="col-md-2">
-                            <input type="date" class="form-control" name="latihan[{{ $index }}][tarikh_mula]" value="{{ isset($latihan['tarikh_mula']) ? \Carbon\Carbon::parse($latihan['tarikh_mula'])->format('Y-m-d') : '' }}" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="date" class="form-control" name="latihan[{{ $index }}][tarikh_tamat]" value="{{ isset($latihan['tarikh_tamat']) ? \Carbon\Carbon::parse($latihan['tarikh_tamat'])->format('Y-m-d') : '' }}" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" class="form-control" name="latihan[{{ $index }}][tempat]" placeholder="{{ __('Tempat') }}" value="{{ $latihan['tempat'] ?? '' }}" required>
-                        </div>
-                        <div class="col-md-1">
-                            @if($index > 0)
-                                <button type="button" class="btn btn-danger remove-latihan"><i class="fas fa-trash"></i></button>
-                            @endif
-                        </div>
-                        <input type="hidden" name="latihan[{{ $index }}][diperlukan]" value="0">
-                    </div>
-                    @endforeach
-                @else
-                    <div class="row latihan-row mb-3">
-                        <div class="col-md-3">
-                            <input type="text" class="form-control" name="latihan[0][nama_latihan]" placeholder="{{ __('Nama Latihan') }}" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" class="form-control" name="latihan[0][sijil]" placeholder="{{ __('No. Sijil') }}">
-                        </div>
-                        <div class="col-md-2">
-                            <input type="date" class="form-control" name="latihan[0][tarikh_mula]" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="date" class="form-control" name="latihan[0][tarikh_tamat]" required>
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" class="form-control" name="latihan[0][tempat]" placeholder="{{ __('Tempat') }}" required>
-                        </div>
-                        <div class="col-md-1">
-                            <!-- No delete button for first row -->
-                        </div>
-                        <input type="hidden" name="latihan[0][diperlukan]" value="0">
-                    </div>
-                @endif
-            </div>
-            <button type="button" id="add-latihan" class="btn btn-sm btn-secondary mt-2">
-                <i class="fas fa-plus"></i> {{ __('Tambah Latihan') }}
-            </button>
-
-            <p class="mt-4">ii) {{ __('Latihan yang diperlukan') }}</p>
-            
-            <div id="latihan-diperlukan-container">
-                @if(old('latihan_diperlukan', isset($penilaian) ? $penilaian->latihan->where('diperlukan', true)->toArray() : []))
-                    @foreach(old('latihan_diperlukan', isset($penilaian) ? $penilaian->latihan->where('diperlukan', true)->toArray() : []) as $index => $latihan)
-                    <div class="row latihan-diperlukan-row mb-3">
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" name="latihan_diperlukan[{{ $index }}][nama_latihan]" placeholder="{{ __('Nama/Bidang Latihan') }}" value="{{ $latihan['nama_latihan'] ?? '' }}" required>
-                        </div>
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" name="latihan_diperlukan[{{ $index }}][sebab_diperlukan]" placeholder="{{ __('Sebab Diperlukan') }}" value="{{ $latihan['sebab_diperlukan'] ?? '' }}" required>
-                        </div>
-                        <div class="col-md-2">
-                            @if($index > 0)
-                                <button type="button" class="btn btn-danger remove-latihan-diperlukan"><i class="fas fa-trash"></i></button>
-                            @endif
-                        </div>
-                        <input type="hidden" name="latihan_diperlukan[{{ $index }}][diperlukan]" value="1">
-                    </div>
-                    @endforeach
-                @else
-                    <div class="row latihan-diperlukan-row mb-3">
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" name="latihan_diperlukan[0][nama_latihan]" placeholder="{{ __('Nama/Bidang Latihan') }}" required>
-                        </div>
-                        <div class="col-md-5">
-                            <input type="text" class="form-control" name="latihan_diperlukan[0][sebab_diperlukan]" placeholder="{{ __('Sebab Diperlukan') }}" required>
-                        </div>
-                        <div class="col-md-2">
-                            <!-- No delete button for first row -->
-                        </div>
-                        <input type="hidden" name="latihan_diperlukan[0][diperlukan]" value="1">
-                    </div>
-                @endif
-            </div>
-            <button type="button" id="add-latihan-diperlukan" class="btn btn-sm btn-secondary mt-2">
-                <i class="fas fa-plus"></i> {{ __('Tambah Latihan Diperlukan') }}
-            </button>
-        </div>
-    </div>
-
-    <!-- SKT Section -->
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            {{ __('SASARAN KERJA TAHUNAN') }}
-        </div>
-        <div class="card-body">
-            @if($penilaian->tempohPenilaian->jenis === 'sasaran_awal')
-                <h5 class="mb-3">{{ __('BAHAGIAN I - PENETAPAN SASARAN KERJA TAHUNAN') }}</h5>
+            <div class="card-body">
                 <p class="text-muted">{{ __('PYD dan PPP hendaklah berbincang bersama sebelum menetapkan SKT dan petunjuk prestasinya') }}</p>
                 
                 <div id="sasaran-awal-container">
@@ -282,11 +122,17 @@
                 <button type="button" id="add-sasaran-awal" class="btn btn-sm btn-secondary mt-2">
                     <i class="fas fa-plus"></i> {{ __('Tambah Sasaran') }}
                 </button>
-            @endif
+            </div>
+        </div>
+    @endif
 
-            @if($penilaian->tempohPenilaian->jenis === 'pertengahan')
-                <h5 class="mb-3">{{ __('BAHAGIAN II - KAJIAN SEMULA SASARAN KERJA TAHUNAN PERTENGAHAN TAHUN') }}</h5>
-                
+    @if($penilaian->tempohPenilaian->jenis === 'pertengahan' && auth()->user()->role === 'pyd')
+        <!-- Mid Year - SKT Review -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                {{ __('SASARAN KERJA TAHUNAN - KAJIAN SEMULA PERTENGAHAN TAHUN') }}
+            </div>
+            <div class="card-body">
                 <p>1. {{ __('Aktiviti/Projek Yang Ditambah') }}</p>
                 <div id="sasaran-tambah-container">
                     @if(old('sasaran_tambah', isset($penilaian) ? $penilaian->sasaranKerja->where('bahagian', 'pertengahan')->where('ditambah', true)->toArray() : []))
@@ -360,34 +206,172 @@
                 <button type="button" id="add-sasaran-gugur" class="btn btn-sm btn-secondary mt-2">
                     <i class="fas fa-plus"></i> {{ __('Tambah Sasaran Digugurkan') }}
                 </button>
-            @endif
-
-            @if($penilaian->tempohPenilaian->jenis === 'akhir')
-                <h5 class="mb-3">{{ __('BAHAGIAN III - LAPORAN DAN ULASAN KESELURUHAN PENCAPAIAN SASARAN KERJA TAHUNAN PADA AKHIR TAHUN OLEH PYD DAN PPP') }}</h5>
-                
-                <p>1. {{ __('Laporan/Ulasan Oleh PYD') }}</p>
-                @foreach($penilaian->sasaranKerja->where('bahagian', 'awal') as $index => $sasaran)
-                <div class="mb-3">
-                    <label class="form-label">{{ $sasaran->aktiviti }}</label>
-                    <textarea class="form-control" name="sasaran_ulasan_pyd[{{ $sasaran->id }}]" rows="2">{{ old("sasaran_ulasan_pyd.{$sasaran->id}", $sasaran->ulasan_pyd) }}</textarea>
-                </div>
-                @endforeach
-
-                @if(auth()->user()->role === 'ppp')
-                    <p class="mt-4">2. {{ __('Laporan/Ulasan Oleh PPP') }}</p>
-                    @foreach($penilaian->sasaranKerja->where('bahagian', 'awal') as $index => $sasaran)
-                    <div class="mb-3">
-                        <label class="form-label">{{ $sasaran->aktiviti }}</label>
-                        <textarea class="form-control" name="sasaran_ulasan_ppp[{{ $sasaran->id }}]" rows="2">{{ old("sasaran_ulasan_ppp.{$sasaran->id}", $sasaran->ulasan_ppp) }}</textarea>
-                    </div>
-                    @endforeach
-                @endif
-            @endif
+            </div>
         </div>
-    </div>
+    @endif
 
-    @if(auth()->user()->role === 'ppp' || auth()->user()->role === 'ppk')
-        <!-- Evaluation Sections -->
+    @if($penilaian->tempohPenilaian->jenis === 'akhir' && auth()->user()->role === 'pyd')
+        <!-- End Year - PYD fills Bahagian II -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                {{ __('BAHAGIAN II - KEGIATAN DAN SUMBANGAN DI LUAR TUGAS RASMI/LATIHAN') }}
+            </div>
+            <div class="card-body">
+                <h5 class="mb-3">1. {{ __('KEGIATAN DAN SUMBANGAN DI LUAR TUGAS RASMI') }}</h5>
+                
+                <div id="kegiatan-container">
+                    @if(old('kegiatan', isset($penilaian) ? $penilaian->kegiatanLuar->toArray() : []))
+                        @foreach(old('kegiatan', isset($penilaian) ? $penilaian->kegiatanLuar->toArray() : []) as $index => $kegiatan)
+                        <div class="row kegiatan-row mb-3">
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="kegiatan[{{ $index }}][kegiatan]" placeholder="{{ __('Kegiatan/Aktiviti/Sumbangan') }}" value="{{ $kegiatan['kegiatan'] ?? '' }}" required>
+                            </div>
+                            <div class="col-md-5">
+                                <select class="form-select" name="kegiatan[{{ $index }}][peringkat]" required>
+                                    <option value="">{{ __('Pilih Peringkat') }}</option>
+                                    <option value="komuniti" {{ ($kegiatan['peringkat'] ?? '') == 'komuniti' ? 'selected' : '' }}>{{ __('Komuniti') }}</option>
+                                    <option value="jabatan" {{ ($kegiatan['peringkat'] ?? '') == 'jabatan' ? 'selected' : '' }}>{{ __('Jabatan') }}</option>
+                                    <option value="daerah" {{ ($kegiatan['peringkat'] ?? '') == 'daerah' ? 'selected' : '' }}>{{ __('Daerah') }}</option>
+                                    <option value="negeri" {{ ($kegiatan['peringkat'] ?? '') == 'negeri' ? 'selected' : '' }}>{{ __('Negeri') }}</option>
+                                    <option value="negara" {{ ($kegiatan['peringkat'] ?? '') == 'negara' ? 'selected' : '' }}>{{ __('Negara') }}</option>
+                                    <option value="antarabangsa" {{ ($kegiatan['peringkat'] ?? '') == 'antarabangsa' ? 'selected' : '' }}>{{ __('Antarabangsa') }}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                @if($index > 0)
+                                    <button type="button" class="btn btn-danger remove-kegiatan"><i class="fas fa-trash"></i></button>
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    @else
+                        <div class="row kegiatan-row mb-3">
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="kegiatan[0][kegiatan]" placeholder="{{ __('Kegiatan/Aktiviti/Sumbangan') }}" required>
+                            </div>
+                            <div class="col-md-5">
+                                <select class="form-select" name="kegiatan[0][peringkat]" required>
+                                    <option value="">{{ __('Pilih Peringkat') }}</option>
+                                    <option value="komuniti">{{ __('Komuniti') }}</option>
+                                    <option value="jabatan">{{ __('Jabatan') }}</option>
+                                    <option value="daerah">{{ __('Daerah') }}</option>
+                                    <option value="negeri">{{ __('Negeri') }}</option>
+                                    <option value="negara">{{ __('Negara') }}</option>
+                                    <option value="antarabangsa">{{ __('Antarabangsa') }}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <!-- No delete button for first row -->
+                            </div>
+                        </div>
+                    @endif
+                </div>
+                <button type="button" id="add-kegiatan" class="btn btn-sm btn-secondary mt-2">
+                    <i class="fas fa-plus"></i> {{ __('Tambah Kegiatan') }}
+                </button>
+
+                <h5 class="mt-4 mb-3">2. {{ __('LATIHAN') }}</h5>
+                <p>i) {{ __('Latihan yang dihadiri') }}</p>
+                
+                <div id="latihan-container">
+                    @if(old('latihan', isset($penilaian) ? $penilaian->latihan->where('diperlukan', false)->toArray() : []))
+                        @foreach(old('latihan', isset($penilaian) ? $penilaian->latihan->where('diperlukan', false)->toArray() : []) as $index => $latihan)
+                        <div class="row latihan-row mb-3">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" name="latihan[{{ $index }}][nama_latihan]" placeholder="{{ __('Nama Latihan') }}" value="{{ $latihan['nama_latihan'] ?? '' }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="latihan[{{ $index }}][sijil]" placeholder="{{ __('No. Sijil') }}" value="{{ $latihan['sijil'] ?? '' }}">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" name="latihan[{{ $index }}][tarikh_mula]" value="{{ isset($latihan['tarikh_mula']) ? \Carbon\Carbon::parse($latihan['tarikh_mula'])->format('Y-m-d') : '' }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" name="latihan[{{ $index }}][tarikh_tamat]" value="{{ isset($latihan['tarikh_tamat']) ? \Carbon\Carbon::parse($latihan['tarikh_tamat'])->format('Y-m-d') : '' }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="latihan[{{ $index }}][tempat]" placeholder="{{ __('Tempat') }}" value="{{ $latihan['tempat'] ?? '' }}" required>
+                            </div>
+                            <div class="col-md-1">
+                                @if($index > 0)
+                                    <button type="button" class="btn btn-danger remove-latihan"><i class="fas fa-trash"></i></button>
+                                @endif
+                            </div>
+                            <input type="hidden" name="latihan[{{ $index }}][diperlukan]" value="0">
+                        </div>
+                        @endforeach
+                    @else
+                        <div class="row latihan-row mb-3">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" name="latihan[0][nama_latihan]" placeholder="{{ __('Nama Latihan') }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="latihan[0][sijil]" placeholder="{{ __('No. Sijil') }}">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" name="latihan[0][tarikh_mula]" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" name="latihan[0][tarikh_tamat]" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" name="latihan[0][tempat]" placeholder="{{ __('Tempat') }}" required>
+                            </div>
+                            <div class="col-md-1">
+                                <!-- No delete button for first row -->
+                            </div>
+                            <input type="hidden" name="latihan[0][diperlukan]" value="0">
+                        </div>
+                    @endif
+                </div>
+                <button type="button" id="add-latihan" class="btn btn-sm btn-secondary mt-2">
+                    <i class="fas fa-plus"></i> {{ __('Tambah Latihan') }}
+                </button>
+
+                <p class="mt-4">ii) {{ __('Latihan yang diperlukan') }}</p>
+                
+                <div id="latihan-diperlukan-container">
+                    @if(old('latihan_diperlukan', isset($penilaian) ? $penilaian->latihan->where('diperlukan', true)->toArray() : []))
+                        @foreach(old('latihan_diperlukan', isset($penilaian) ? $penilaian->latihan->where('diperlukan', true)->toArray() : []) as $index => $latihan)
+                        <div class="row latihan-diperlukan-row mb-3">
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="latihan_diperlukan[{{ $index }}][nama_latihan]" placeholder="{{ __('Nama/Bidang Latihan') }}" value="{{ $latihan['nama_latihan'] ?? '' }}" required>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="latihan_diperlukan[{{ $index }}][sebab_diperlukan]" placeholder="{{ __('Sebab Diperlukan') }}" value="{{ $latihan['sebab_diperlukan'] ?? '' }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                @if($index > 0)
+                                    <button type="button" class="btn btn-danger remove-latihan-diperlukan"><i class="fas fa-trash"></i></button>
+                                @endif
+                            </div>
+                            <input type="hidden" name="latihan_diperlukan[{{ $index }}][diperlukan]" value="1">
+                        </div>
+                        @endforeach
+                    @else
+                        <div class="row latihan-diperlukan-row mb-3">
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="latihan_diperlukan[0][nama_latihan]" placeholder="{{ __('Nama/Bidang Latihan') }}" required>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="latihan_diperlukan[0][sebah_diperlukan]" placeholder="{{ __('Sebab Diperlukan') }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                <!-- No delete button for first row -->
+                            </div>
+                            <input type="hidden" name="latihan_diperlukan[0][diperlukan]" value="1">
+                        </div>
+                    @endif
+                </div>
+                <button type="button" id="add-latihan-diperlukan" class="btn btn-sm btn-secondary mt-2">
+                    <i class="fas fa-plus"></i> {{ __('Tambah Latihan Diperlukan') }}
+                </button>
+            </div>
+        </div>
+    @endif
+
+    @if($penilaian->tempohPenilaian->jenis === 'akhir' && (auth()->user()->role === 'ppp' || auth()->user()->role === 'ppk'))
+        <!-- End Year - Performance Evaluation -->
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
                 {{ __('PENILAIAN PRESTASI') }}
@@ -543,176 +527,178 @@
 
 @push('scripts')
 <script>
-    // Kegiatan Luar Dynamic Fields
-    $('#add-kegiatan').click(function() {
-        let index = $('.kegiatan-row').length;
-        let html = `
-        <div class="row kegiatan-row mb-3">
-            <div class="col-md-5">
-                <input type="text" class="form-control" name="kegiatan[${index}][kegiatan]" placeholder="{{ __('Kegiatan/Aktiviti/Sumbangan') }}" required>
-            </div>
-            <div class="col-md-5">
-                <select class="form-select" name="kegiatan[${index}][peringkat]" required>
-                    <option value="">{{ __('Pilih Peringkat') }}</option>
-                    <option value="komuniti">{{ __('Komuniti') }}</option>
-                    <option value="jabatan">{{ __('Jabatan') }}</option>
-                    <option value="daerah">{{ __('Daerah') }}</option>
-                    <option value="negeri">{{ __('Negeri') }}</option>
-                    <option value="negara">{{ __('Negara') }}</option>
-                    <option value="antarabangsa">{{ __('Antarabangsa') }}</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-danger remove-kegiatan"><i class="fas fa-trash"></i></button>
-            </div>
-        </div>`;
-        $('#kegiatan-container').append(html);
-    });
-
-    $(document).on('click', '.remove-kegiatan', function() {
-        $(this).closest('.kegiatan-row').remove();
-        reindexFields('.kegiatan-row', 'kegiatan');
-    });
-
-    // Latihan Dynamic Fields
-    $('#add-latihan').click(function() {
-        let index = $('.latihan-row').length;
-        let html = `
-        <div class="row latihan-row mb-3">
-            <div class="col-md-3">
-                <input type="text" class="form-control" name="latihan[${index}][nama_latihan]" placeholder="{{ __('Nama Latihan') }}" required>
-            </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="latihan[${index}][sijil]" placeholder="{{ __('No. Sijil') }}">
-            </div>
-            <div class="col-md-2">
-                <input type="date" class="form-control" name="latihan[${index}][tarikh_mula]" required>
-            </div>
-            <div class="col-md-2">
-                <input type="date" class="form-control" name="latihan[${index}][tarikh_tamat]" required>
-            </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="latihan[${index}][tempat]" placeholder="{{ __('Tempat') }}" required>
-            </div>
-            <div class="col-md-1">
-                <button type="button" class="btn btn-danger remove-latihan"><i class="fas fa-trash"></i></button>
-            </div>
-            <input type="hidden" name="latihan[${index}][diperlukan]" value="0">
-        </div>`;
-        $('#latihan-container').append(html);
-    });
-
-    $(document).on('click', '.remove-latihan', function() {
-        $(this).closest('.latihan-row').remove();
-        reindexFields('.latihan-row', 'latihan');
-    });
-
-    // Latihan Diperlukan Dynamic Fields
-    $('#add-latihan-diperlukan').click(function() {
-        let index = $('.latihan-diperlukan-row').length;
-        let html = `
-        <div class="row latihan-diperlukan-row mb-3">
-            <div class="col-md-5">
-                <input type="text" class="form-control" name="latihan_diperlukan[${index}][nama_latihan]" placeholder="{{ __('Nama/Bidang Latihan') }}" required>
-            </div>
-            <div class="col-md-5">
-                <input type="text" class="form-control" name="latihan_diperlukan[${index}][sebab_diperlukan]" placeholder="{{ __('Sebab Diperlukan') }}" required>
-            </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-danger remove-latihan-diperlukan"><i class="fas fa-trash"></i></button>
-            </div>
-            <input type="hidden" name="latihan_diperlukan[${index}][diperlukan]" value="1">
-        </div>`;
-        $('#latihan-diperlukan-container').append(html);
-    });
-
-    $(document).on('click', '.remove-latihan-diperlukan', function() {
-        $(this).closest('.latihan-diperlukan-row').remove();
-        reindexFields('.latihan-diperlukan-row', 'latihan_diperlukan');
-    });
-
-    // Sasaran Awal Dynamic Fields
-    $('#add-sasaran-awal').click(function() {
-        let index = $('.sasaran-awal-row').length;
-        let html = `
-        <div class="row sasaran-awal-row mb-3">
-            <div class="col-md-5">
-                <input type="text" class="form-control" name="sasaran_awal[${index}][aktiviti]" placeholder="{{ __('Aktiviti/Projek') }}" required>
-            </div>
-            <div class="col-md-5">
-                <input type="text" class="form-control" name="sasaran_awal[${index}][petunjuk_prestasi]" placeholder="{{ __('Petunjuk Prestasi (Kuantiti/Kualiti/Masa/Kos)') }}" required>
-            </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-danger remove-sasaran-awal"><i class="fas fa-trash"></i></button>
-            </div>
-            <input type="hidden" name="sasaran_awal[${index}][bahagian]" value="awal">
-        </div>`;
-        $('#sasaran-awal-container').append(html);
-    });
-
-    $(document).on('click', '.remove-sasaran-awal', function() {
-        $(this).closest('.sasaran-awal-row').remove();
-        reindexFields('.sasaran-awal-row', 'sasaran_awal');
-    });
-
-    // Sasaran Tambah Dynamic Fields
-    $('#add-sasaran-tambah').click(function() {
-        let index = $('.sasaran-tambah-row').length;
-        let html = `
-        <div class="row sasaran-tambah-row mb-3">
-            <div class="col-md-5">
-                <input type="text" class="form-control" name="sasaran_tambah[${index}][aktiviti]" placeholder="{{ __('Aktiviti/Projek') }}" required>
-            </div>
-            <div class="col-md-5">
-                <input type="text" class="form-control" name="sasaran_tambah[${index}][petunjuk_prestasi]" placeholder="{{ __('Petunjuk Prestasi (Kuantiti/Kualiti/Masa/Kos)') }}" required>
-            </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-danger remove-sasaran-tambah"><i class="fas fa-trash"></i></button>
-            </div>
-            <input type="hidden" name="sasaran_tambah[${index}][bahagian]" value="pertengahan">
-            <input type="hidden" name="sasaran_tambah[${index}][ditambah]" value="1">
-        </div>`;
-        $('#sasaran-tambah-container').append(html);
-    });
-
-    $(document).on('click', '.remove-sasaran-tambah', function() {
-        $(this).closest('.sasaran-tambah-row').remove();
-        reindexFields('.sasaran-tambah-row', 'sasaran_tambah');
-    });
-
-    // Sasaran Gugur Dynamic Fields
-    $('#add-sasaran-gugur').click(function() {
-        let index = $('.sasaran-gugur-row').length;
-        let html = `
-        <div class="row sasaran-gugur-row mb-3">
-            <div class="col-md-10">
-                <input type="text" class="form-control" name="sasaran_gugur[${index}][aktiviti]" placeholder="{{ __('Aktiviti/Projek') }}" required>
-            </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-danger remove-sasaran-gugur"><i class="fas fa-trash"></i></button>
-            </div>
-            <input type="hidden" name="sasaran_gugur[${index}][bahagian]" value="pertengahan">
-            <input type="hidden" name="sasaran_gugur[${index}][digugurkan]" value="1">
-        </div>`;
-        $('#sasaran-gugur-container').append(html);
-    });
-
-    $(document).on('click', '.remove-sasaran-gugur', function() {
-        $(this).closest('.sasaran-gugur-row').remove();
-        reindexFields('.sasaran-gugur-row', 'sasaran_gugur');
-    });
-
-    // Helper function to reindex fields
-    function reindexFields(selector, prefix) {
-        $(selector).each(function(i) {
-            $(this).find('input, select').each(function() {
-                let name = $(this).attr('name');
-                if (name) {
-                    let newName = name.replace(new RegExp(`${prefix}\\[\\d+\\]`), `${prefix}[${i}]`);
-                    $(this).attr('name', newName);
-                }
-            });
+    $(document).ready(function() {
+        // Kegiatan Luar Dynamic Fields
+        $('#add-kegiatan').click(function() {
+            let index = $('.kegiatan-row').length;
+            let html = `
+            <div class="row kegiatan-row mb-3">
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="kegiatan[${index}][kegiatan]" placeholder="{{ __('Kegiatan/Aktiviti/Sumbangan') }}" required>
+                </div>
+                <div class="col-md-5">
+                    <select class="form-select" name="kegiatan[${index}][peringkat]" required>
+                        <option value="">{{ __('Pilih Peringkat') }}</option>
+                        <option value="komuniti">{{ __('Komuniti') }}</option>
+                        <option value="jabatan">{{ __('Jabatan') }}</option>
+                        <option value="daerah">{{ __('Daerah') }}</option>
+                        <option value="negeri">{{ __('Negeri') }}</option>
+                        <option value="negara">{{ __('Negara') }}</option>
+                        <option value="antarabangsa">{{ __('Antarabangsa') }}</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger remove-kegiatan"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`;
+            $('#kegiatan-container').append(html);
         });
-    }
+
+        $(document).on('click', '.remove-kegiatan', function() {
+            $(this).closest('.kegiatan-row').remove();
+            reindexFields('.kegiatan-row', 'kegiatan');
+        });
+
+        // Latihan Dynamic Fields
+        $('#add-latihan').click(function() {
+            let index = $('.latihan-row').length;
+            let html = `
+            <div class="row latihan-row mb-3">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="latihan[${index}][nama_latihan]" placeholder="{{ __('Nama Latihan') }}" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="latihan[${index}][sijil]" placeholder="{{ __('No. Sijil') }}">
+                </div>
+                <div class="col-md-2">
+                    <input type="date" class="form-control" name="latihan[${index}][tarikh_mula]" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" class="form-control" name="latihan[${index}][tarikh_tamat]" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="latihan[${index}][tempat]" placeholder="{{ __('Tempat') }}" required>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-danger remove-latihan"><i class="fas fa-trash"></i></button>
+                </div>
+                <input type="hidden" name="latihan[${index}][diperlukan]" value="0">
+            </div>`;
+            $('#latihan-container').append(html);
+        });
+
+        $(document).on('click', '.remove-latihan', function() {
+            $(this).closest('.latihan-row').remove();
+            reindexFields('.latihan-row', 'latihan');
+        });
+
+        // Latihan Diperlukan Dynamic Fields
+        $('#add-latihan-diperlukan').click(function() {
+            let index = $('.latihan-diperlukan-row').length;
+            let html = `
+            <div class="row latihan-diperlukan-row mb-3">
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="latihan_diperlukan[${index}][nama_latihan]" placeholder="{{ __('Nama/Bidang Latihan') }}" required>
+                </div>
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="latihan_diperlukan[${index}][sebab_diperlukan]" placeholder="{{ __('Sebab Diperlukan') }}" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger remove-latihan-diperlukan"><i class="fas fa-trash"></i></button>
+                </div>
+                <input type="hidden" name="latihan_diperlukan[${index}][diperlukan]" value="1">
+            </div>`;
+            $('#latihan-diperlukan-container').append(html);
+        });
+
+        $(document).on('click', '.remove-latihan-diperlukan', function() {
+            $(this).closest('.latihan-diperlukan-row').remove();
+            reindexFields('.latihan-diperlukan-row', 'latihan_diperlukan');
+        });
+
+        // Sasaran Awal Dynamic Fields
+        $('#add-sasaran-awal').click(function() {
+            let index = $('.sasaran-awal-row').length;
+            let html = `
+            <div class="row sasaran-awal-row mb-3">
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="sasaran_awal[${index}][aktiviti]" placeholder="{{ __('Aktiviti/Projek') }}" required>
+                </div>
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="sasaran_awal[${index}][petunjuk_prestasi]" placeholder="{{ __('Petunjuk Prestasi (Kuantiti/Kualiti/Masa/Kos)') }}" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger remove-sasaran-awal"><i class="fas fa-trash"></i></button>
+                </div>
+                <input type="hidden" name="sasaran_awal[${index}][bahagian]" value="awal">
+            </div>`;
+            $('#sasaran-awal-container').append(html);
+        });
+
+        $(document).on('click', '.remove-sasaran-awal', function() {
+            $(this).closest('.sasaran-awal-row').remove();
+            reindexFields('.sasaran-awal-row', 'sasaran_awal');
+        });
+
+        // Sasaran Tambah Dynamic Fields
+        $('#add-sasaran-tambah').click(function() {
+            let index = $('.sasaran-tambah-row').length;
+            let html = `
+            <div class="row sasaran-tambah-row mb-3">
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="sasaran_tambah[${index}][aktiviti]" placeholder="{{ __('Aktiviti/Projek') }}" required>
+                </div>
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="sasaran_tambah[${index}][petunjuk_prestasi]" placeholder="{{ __('Petunjuk Prestasi (Kuantiti/Kualiti/Masa/Kos)') }}" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger remove-sasaran-tambah"><i class="fas fa-trash"></i></button>
+                </div>
+                <input type="hidden" name="sasaran_tambah[${index}][bahagian]" value="pertengahan">
+                <input type="hidden" name="sasaran_tambah[${index}][ditambah]" value="1">
+            </div>`;
+            $('#sasaran-tambah-container').append(html);
+        });
+
+        $(document).on('click', '.remove-sasaran-tambah', function() {
+            $(this).closest('.sasaran-tambah-row').remove();
+            reindexFields('.sasaran-tambah-row', 'sasaran_tambah');
+        });
+
+        // Sasaran Gugur Dynamic Fields
+        $('#add-sasaran-gugur').click(function() {
+            let index = $('.sasaran-gugur-row').length;
+            let html = `
+            <div class="row sasaran-gugur-row mb-3">
+                <div class="col-md-10">
+                    <input type="text" class="form-control" name="sasaran_gugur[${index}][aktiviti]" placeholder="{{ __('Aktiviti/Projek') }}" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger remove-sasaran-gugur"><i class="fas fa-trash"></i></button>
+                </div>
+                <input type="hidden" name="sasaran_gugur[${index}][bahagian]" value="pertengahan">
+                <input type="hidden" name="sasaran_gugur[${index}][digugurkan]" value="1">
+            </div>`;
+            $('#sasaran-gugur-container').append(html);
+        });
+
+        $(document).on('click', '.remove-sasaran-gugur', function() {
+            $(this).closest('.sasaran-gugur-row').remove();
+            reindexFields('.sasaran-gugur-row', 'sasaran_gugur');
+        });
+
+        // Helper function to reindex fields
+        function reindexFields(selector, prefix) {
+            $(selector).each(function(i) {
+                $(this).find('input, select').each(function() {
+                    let name = $(this).attr('name');
+                    if (name) {
+                        let newName = name.replace(new RegExp(`${prefix}\\[\\d+\\]`), `${prefix}[${i}]`);
+                        $(this).attr('name', newName);
+                    }
+                });
+            });
+        }
+    });
 </script>
 @endpush

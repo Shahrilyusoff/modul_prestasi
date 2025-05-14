@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Penilaian routes
     Route::get('penilaian/pyd', [PenilaianController::class, 'pyd'])->name('penilaian.pyd');
     Route::resource('penilaian', PenilaianController::class);
+    Route::post('/penilaian/{penilaian}/bahagian-ii', [PenilaianController::class, 'submitBahagianII'])->name('penilaian.submit-bahagian-ii');
 
     // Laporan routes
     Route::get('laporan/penilaian/{penilaian}', [LaporanController::class, 'penilaian'])
